@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Peminjaman } from './entities/peminjaman.entity';
 import { CreatePeminjamanDto } from './dto/create-peminjaman.dto';
 import { UpdatePeminjamanDto } from './dto/update-peminjaman.dto';
 
 @Injectable()
 export class PeminjamanService {
-  create(createPeminjamanDto: CreatePeminjamanDto) {
-    return 'This action adds a new peminjaman';
+  constructor(
+    @InjectRepository(Peminjaman)
+    private peminjamanRepository: Repository<Peminjaman>,
+  ) {}
+
+  async create(createPeminjamanDto: CreatePeminjamanDto): Promise<Peminjaman> {
+    const peminjaman = this.peminjamanRepository.create(createPeminjamanDto as Partial<Peminjaman>);
+    return await this.peminjamanRepository.save(peminjaman as Peminjaman);
   }
 
-  findAll() {
-    return `This action returns all peminjaman`;
+  async findAll(): Promise<Peminjaman[]> {
+    return await this.peminjamanRepository.find({
+      relations: ['user', 'petugas', 'alat', 'pengembalian'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} peminjaman`;
+  async findOne(id: number): Promise<Peminjaman> {
+    const peminjaman = await this.peminjamanRepository.findOne({
+      where: { id },
+      relations: ['user', 'petugas', 'alat', 'pengembalian'],
+    });
+
+    if (!peminjaman) {
+      throw new NotFoundException('Peminjaman tidak ditemukan');
+    }
+
+    return peminjaman;
   }
 
-  update(id: number, updatePeminjamanDto: UpdatePeminjamanDto) {
-    return `This action updates a #${id} peminjaman`;
+  async update(id: number, updatePeminjamanDto: UpdatePeminjamanDto): Promise<Peminjaman> {
+    const peminjaman = await this.findOne(id);
+    Object.assign(peminjaman, updatePeminjamanDto);
+    return await this.peminjamanRepository.save(peminjaman);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} peminjaman`;
+  async remove(id: number): Promise<void> {
+    const peminjaman = await this.findOne(id);
+    await this.peminjamanRepository.remove(peminjaman);
   }
 }

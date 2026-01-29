@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AlatService } from './alat.service';
 import { CreateAlatDto } from './dto/create-alat.dto';
 import { UpdateAlatDto } from './dto/update-alat.dto';
 
-@Controller('alat')
+@Controller('alats')
 export class AlatController {
   constructor(private readonly alatService: AlatService) {}
 
@@ -13,8 +13,8 @@ export class AlatController {
   }
 
   @Get()
-  findAll() {
-    return this.alatService.findAll();
+  findAll(@Query('status') status?: string, @Query('categoryId') categoryId?: string) {
+    return this.alatService.findAll(status as any, categoryId ? +categoryId : undefined);
   }
 
   @Get(':id')

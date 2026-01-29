@@ -25,6 +25,6 @@ export class Category {
     @UpdateDateColumn({ name: 'updated_at'})
     updatedAt: Date;
 
-    @OneToMany(() => Alat, (alat) => alat.Category)
+    @OneToMany(() => Alat, (alat) => alat.category)
     alats: Alat[];
 }

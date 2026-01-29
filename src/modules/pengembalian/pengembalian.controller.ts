@@ -1,15 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Request } from '@nestjs/common';
 import { PengembalianService } from './pengembalian.service';
 import { CreatePengembalianDto } from './dto/create-pengembalian.dto';
-import { UpdatePengembalianDto } from './dto/update-pengembalian.dto';
 
 @Controller('pengembalian')
 export class PengembalianController {
   constructor(private readonly pengembalianService: PengembalianService) {}
 
   @Post()
-  create(@Body() createPengembalianDto: CreatePengembalianDto) {
-    return this.pengembalianService.create(createPengembalianDto);
+  create(@Body() createPengembalianDto: CreatePengembalianDto, @Request() req) {
+    // const userId = req.user.id; // dari JWT
+    const userId = 1; // hardcoded untuk testing
+    return this.pengembalianService.create(createPengembalianDto, userId);
   }
 
   @Get()
@@ -22,13 +23,8 @@ export class PengembalianController {
     return this.pengembalianService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePengembalianDto: UpdatePengembalianDto) {
-    return this.pengembalianService.update(+id, updatePengembalianDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pengembalianService.remove(+id);
+  @Get('peminjaman/:peminjamanId')
+  findByPeminjaman(@Param('peminjamanId') peminjamanId: string) {
+    return this.pengembalianService.findByPeminjaman(+peminjamanId);
   }
 }

@@ -1,4 +1,4 @@
-import { LogAktifita } from 'src/modules/log-aktifitas/entities/log-aktifita.entity';
+import { LogAktifita } from '../../log-aktifitas/entities/log-aktifita.entity';
 import { Peminjaman } from 'src/modules/peminjaman/entities/peminjaman.entity';
 import {
     Entity,
@@ -15,7 +15,7 @@ export enum UserRole {
     PEMINJAM = 'peminjam',
 }
 
-Entity('users')
+@Entity('users')
 export class User {
     @PrimaryGeneratedColumn()
     id: number;

@@ -48,7 +48,7 @@ export class Alat {
         onDelete: 'CASCADE',
     })
     @JoinColumn({ name: 'category_id'})
-    Category: Category;
+    category: Category;
 
     @OneToMany(() => Peminjaman, (peminjaman) => peminjaman.alat)
     peminjaman: Peminjaman[];
